@@ -1,0 +1,33 @@
+{
+  "name": "shms-js",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+	"start": "node app",
+	"dev": "nodemon app"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/miq28/shms-js.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/miq28/shms-js/issues"
+  },
+  "homepage": "https://github.com/miq28/shms-js#readme",
+  "dependencies": {
+    "@influxdata/influxdb-client": "^1.24.0",
+    "chokidar": "^3.5.3",
+    "dotenv": "^16.0.0",
+    "js-logger": "^1.6.1",
+    "moment-timezone": "^0.5.34",
+    "strip-bom": "^4.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  }
+}
