@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-	"start": "node app",
-	"dev": "nodemon app"
+    "penggaron": "node /home/shms/shms-js/shms/tmj-penggaron/index.js"
   },
   "repository": {
     "type": "git",

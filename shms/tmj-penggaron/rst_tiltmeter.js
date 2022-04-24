@@ -3,8 +3,7 @@
 // Shows how to use InfluxDB write API. //
 //////////////////////////////////////////
 
-const logger = require('../logger')
-
+const { InfluxDB, Point, HttpError } = require('@influxdata/influxdb-client')
 // https://stackoverflow.com/a/48724909
 // Also make sure you have installed moment-timezone with
 // npm install moment-timezone --save
@@ -15,17 +14,22 @@ const fs = require('fs');
 const stripBom = require('strip-bom');
 const path = require('path');
 let chokidar = require('chokidar');
+const Logger = require('js-logger')
 
-
-const { InfluxDB, Point, HttpError } = require('@influxdata/influxdb-client')
 
 const URL = process.env.URL
 const TOKEN = process.env.TOKEN
 const ORG = process.env.ORG
 const BUCKET = process.env.BUCKET
-// logger.debug('*** WRITE POINTS ***')
 
 const measurement_name = 'rst_tiltmeter';
+
+
+Logger.useDefaults({
+    defaultLevel: Logger.INFO,
+})
+var logger1 = Logger.get(measurement_name);
+
 
 
 let watchedPaths = [
@@ -58,7 +62,7 @@ let watchedPaths = [
 // function to handle 'UnhandledRejection' error
 process.on('unhandledRejection', function (err) {
     // console.error(err);
-    logger.error(err.message);
+    logger1.error(err.message);
 });
 
 
@@ -82,27 +86,27 @@ let jobNum = 0;
 
 watcher
     .on('ready', function () {
-        logger.info('Initial scan complete. Ready for changes!');
+        logger1.info('Initial scan complete. Ready for changes!');
         // let time = new Date();
         // jobNum++;
-        const path = '/home/shms/ftp/2005_tmj_penggaron/rst_tiltmeter/DTLDeltaAngle/DTLDeltaAngle_2022-01-28.txt'
-        logger.debug(`Job ${jobNum} - file found, file: ${path}`);
-        jobNum++;
-        run(jobNum, path);
- 
+        // const path = '/home/shms/ftp/2005_tmj_penggaron/rst_tiltmeter/DTLDeltaAngle/DTLDeltaAngle_2022-01-28.txt'
+        // logger1.debug(`Job ${jobNum} - file found, file: ${path}`);
+        // jobNum++;
+        // run(jobNum, path);
+
         // watcher.add(path)
         // console.log(watchedPaths)
     })
     .on('add', function (path) {
         let time = new Date();
         jobNum++;
-        logger.info(`Job ${jobNum} - file added: ${path}`);
+        logger1.info(`Job ${jobNum} - file added: ${path}`);
         run(jobNum, path);
     })
     .on('change', function (path) {
         let time = new Date();
         jobNum++;
-        logger.info(`Job ${jobNum} - file changed: ${path}`);
+        logger1.info(`Job ${jobNum} - file changed: ${path}`);
         run(jobNum, path);
     })
     // .on('unlink', function (path) {
@@ -113,7 +117,7 @@ watcher
     .on('error', function (error) {
         // let time = new Date();
         // console.error(time.toISOString(), 'Error happened', error);
-        logger.error('Error happened', error);
+        logger1.error('Error happened', error);
     })
 
 // moment.tz.add([
@@ -137,21 +141,21 @@ async function run(jobNum, _path) {
     // let path = _path;
 
     // let dataStr = await removeBOM(path);
-    // logger.debug('*** Remove BOM ***')
+    // logger1.debug('*** Remove BOM ***')
     let dataStr = stripBom(fs.readFileSync(_path, 'utf8'));
     let dataObj = await processData(job, dataStr);
 
-    // logger.debug('dataObj', dataObj.length)
+    // logger1.debug('dataObj', dataObj.length)
 
     const influxPointsArray = await insertData(job, _path, dataObj);
-    // logger.debug(temp)
+    // logger1.debug(temp)
     // influxPointsArray.push(temp)
 
     if (Array.isArray(influxPointsArray) && influxPointsArray.length > 0) {
 
         // writeApi.writePoints(influxPointsArray)
         // for (let i = 0; i < influxPointsArray.length; i++) {
-        logger.info(`Job ${job} - [${measurement_name}] Uploading ${influxPointsArray.length} data...`);
+        logger1.info(`Job ${job} - Uploading ${influxPointsArray.length} data...`);
 
         // // create a write API, expecting point timestamps in nanoseconds (can be also 's', 'ms', 'us')
         const writeApi = new InfluxDB({ url: URL, token: TOKEN }).getWriteApi(ORG, BUCKET, 'ns')
@@ -164,24 +168,24 @@ async function run(jobNum, _path) {
         writeApi
             .close()
             .then(() => {
-                // logger.debug('FINISHED ... now try ./query.ts')
+                // logger1.debug('FINISHED ... now try ./query.ts')
                 let end = new Date() - start;
-                logger.info(`Job ${job} - [${measurement_name}] Completed in ${(end / 1000).toFixed(2)} secs`);
+                logger1.info(`Job ${job} - Completed in ${(end / 1000).toFixed(2)} secs`);
             })
             .catch(e => {
-                logger.debug(e)
+                logger1.debug(e)
                 if (e instanceof HttpError && e.statusCode === 401) {
-                    logger.debug('Run ./onboarding.js to setup a new InfluxDB database.')
+                    logger1.debug('Run ./onboarding.js to setup a new InfluxDB database.')
                 }
-                logger.error('\nFinished ERROR')
+                logger1.error('\nFinished ERROR')
             })
     } else {
-        logger.info('Sorry... No data to upload...')
+        logger1.info('Sorry... No data to upload...')
     }
 }
 
 async function processData(_job, dataStr) {
-    logger.debug(`Job ${_job} - *** Process Data ***`)
+    logger1.debug(`Job ${_job} - *** Process Data ***`)
     // let job = _job;
 
     let lines = splitLines(dataStr);
@@ -209,14 +213,14 @@ async function processData(_job, dataStr) {
 }
 
 async function insertData(_job, _path, objectvar) {
-    logger.debug(`Job ${_job} - *** Insert Data ***`)
+    logger1.debug(`Job ${_job} - *** Insert Data ***`)
     // let job = _job;
     // let path = _path;
     // let influxPointsArray = _influxPointsArray;
 
     // await checkTable(job, pool, key);
 
-    logger.debug(`Job ${_job} - Inserting ${measurement_name} data to array...`);
+    logger1.debug(`Job ${_job} - Inserting ${measurement_name} data to array...`);
     // console.log('Path = ', path);
 
     let inserts = [];
@@ -235,11 +239,11 @@ async function insertData(_job, _path, objectvar) {
         if (i == 0) {
             let temp = tempArray.split(',');
             tableName = temp[temp.length - 1];
-            logger.debug(`Job ${_job} - table name: ${tableName}`);
+            logger1.debug(`Job ${_job} - table name: ${tableName}`);
         }
         if (i == 1) {
             headerFields = tempArray.split(',');
-            // logger.debug('headerFields', headerFields);
+            // logger1.debug('headerFields', headerFields);
         }
 
     }
@@ -272,7 +276,7 @@ async function insertData(_job, _path, objectvar) {
 
         if (inserts.length == numberOfColumn && inserts[dateStrColumnNumber].includes(":") && inserts[dateStrColumnNumber].length == 19) {
 
-            // logger.debug('Timestamp is in DATETIME format');
+            // logger1.debug('Timestamp is in DATETIME format');
 
             // console.log('inserts[0]', inserts[0]);
 
@@ -306,7 +310,7 @@ async function insertData(_job, _path, objectvar) {
                 }
             }
 
-            // logger.debug('inserts', inserts)
+            // logger1.debug('inserts', inserts)
 
             let dataStartIndex = initialIndex;
 
@@ -319,17 +323,18 @@ async function insertData(_job, _path, objectvar) {
                         .tag('alias', headerFields[k - 1])
                         .stringField('dateTimeStr', inserts[0])
                         .floatField('value', inserts[k])
-                        .uintField('epoch', epoch * 1000)
+                        // .uintField('epoch', epoch * 1000)
+                        .floatField('epoch', epoch * 1000)
                         .timestamp(epoch * 1000000000)
 
 
                     influxPoints.push(point);
 
-                    // logger.debug(i+1, objectvar.length)
+                    // logger1.debug(i+1, objectvar.length)
 
                     // if ((i != 0 && (i % 1000 === 0)) || i == objectvar.length - 1) {
-                    //     logger.debug('HERE')
-                    //     logger.debug(influxPoints[influxPoints.length-1])
+                    //     logger1.debug('HERE')
+                    //     logger1.debug(influxPoints[influxPoints.length-1])
                     //     return influxPoints
 
                     //     influxPointsArray.push(influxPoints);
@@ -341,7 +346,7 @@ async function insertData(_job, _path, objectvar) {
 
         }
         else {
-            logger.info(`Job ${_job} - Timestamp is NOT in DATETIME format`);
+            logger1.info(`Job ${_job} - Timestamp is NOT in DATETIME format`);
             badRowsArray.push(tempArray);
             // badRows++;
         }
@@ -349,7 +354,7 @@ async function insertData(_job, _path, objectvar) {
 
     // FINALLY, WE RETURN CLEAN DATA TO UPLOAD TO DATABASE!!
 
-    // logger.debug(influxPoints.length, influxPoints[influxPoints.length-1])
+    // logger1.debug(influxPoints.length, influxPoints[influxPoints.length-1])
     return influxPoints
 }
 
@@ -362,14 +367,14 @@ async function insertData(_job, _path, objectvar) {
 // writeApi
 //     .close()
 //     .then(() => {
-//         logger.debug('FINISHED ... now try ./query.ts')
+//         logger1.debug('FINISHED ... now try ./query.ts')
 //     })
 //     .catch(e => {
-//         logger.debug(e)
+//         logger1.debug(e)
 //         if (e instanceof HttpError && e.statusCode === 401) {
-//             logger.debug('Run ./onboarding.js to setup a new InfluxDB database.')
+//             logger1.debug('Run ./onboarding.js to setup a new InfluxDB database.')
 //         }
-//         logger.debug('\nFinished ERROR')
+//         logger1.debug('\nFinished ERROR')
 //     })
 
 

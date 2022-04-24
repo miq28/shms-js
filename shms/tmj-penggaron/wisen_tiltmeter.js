@@ -1,5 +1,5 @@
-const logger = require('../logger')
-
+// const logger = require('../../logger')
+// require('dotenv').config()
 // https://stackoverflow.com/a/48724909
 // Also make sure you have installed moment-timezone with
 // npm install moment-timezone --save
@@ -21,6 +21,12 @@ const BUCKET = process.env.BUCKET
 
 
 const measurement_name = 'wisen_tiltmeter';
+
+const Logger = require('js-logger')
+
+var logger2 = Logger.get(measurement_name);
+
+
 
 let watchedPaths = [
     // "/home/sammy/ftp/files/node/*.txt",
@@ -47,7 +53,7 @@ process.on('unhandledRejection', function (err) {
 
 
 // Something to use when events are received.
-const log = logger.info.bind(console);
+// const log = Logger.info.bind(console);
 
 let watcher = chokidar.watch(watchedPaths, {
     // ignored: /^\./,
@@ -65,11 +71,11 @@ let jobNum = 0;
 
 watcher
     .on('ready', function () {
-        log('Initial scan complete. Ready for changes!');
-        const path = '/home/shms/ftp/2005_tmj_penggaron/wisen_tiltmeter/DeltaAngle/DeltaAngle_2022-01-28.txt'
-        logger.debug(`Job ${jobNum} - file found, file: ${path}`);
-        jobNum++;
-        run(jobNum, path);
+        logger2.info('Initial scan complete. Ready for changes!');
+        // const path = '/home/shms/ftp/2005_tmj_penggaron/wisen_tiltmeter/DeltaAngle/DeltaAngle_2022-01-28.txt'
+        // logger2.debug(`Job ${jobNum} - file found, file: ${path}`);
+        // jobNum++;
+        // run(jobNum, path);
     })
     .on('add', function (path) {
         let time = new Date();
@@ -145,8 +151,8 @@ async function run(jobNum, _path) {
 
         if (influxPointsArray.length) {
             const writeApi = new InfluxDB({ url: URL, token: TOKEN }).getWriteApi(ORG, BUCKET, 'ns')
-            // logger.debug(influxPointsArray[i])
-            logger.info(`Job ${job} - [${measurement_name}] Uploading ${influxPointsArray.length} data...`);
+            // logger2.debug(influxPointsArray[i])
+            logger2.info(`Job ${job} - Uploading ${influxPointsArray.length} data...`);
             writeApi.writePoints(influxPointsArray)
 
             // WriteApi always buffer data into batches to optimize data transfer to InfluxDB server and retries
@@ -155,19 +161,19 @@ async function run(jobNum, _path) {
             writeApi
                 .close()
                 .then(() => {
-                    // logger.debug('FINISHED ... now try ./query.ts')
+                    // logger2.debug('FINISHED ... now try ./query.ts')
                     let end = new Date() - start;
-                    logger.info(`Job ${job} - [${measurement_name}] Completed in ${(end / 1000).toFixed(2)} secs`);
+                    logger2.info(`Job ${job} - Completed in ${(end / 1000).toFixed(2)} secs`);
                 })
                 .catch(e => {
-                    logger.debug(e)
+                    logger2.debug(e)
                     if (e instanceof HttpError && e.statusCode === 401) {
-                        logger.debug('Run ./onboarding.js to setup a new InfluxDB database.')
+                        logger2.debug('Run ./onboarding.js to setup a new InfluxDB database.')
                     }
-                    logger.error('\nFinished ERROR')
+                    logger2.error('\nFinished ERROR')
                 })
         } else {
-            logger.info(`Job ${job} - [${measurement_name}] - No data to upload...`)
+            logger2.info(`Job ${job} - - No data to upload...`)
         }
     }
     else
@@ -180,7 +186,7 @@ async function run(jobNum, _path) {
 }
 
 async function processData(_job, dataStr) {
-    logger.debug(`Job ${_job} - [${measurement_name}] - Process Data`)
+    logger2.debug(`Job ${_job} - Process Data`)
     // let job = _job;
 
     let lines = splitLines(dataStr);
@@ -207,71 +213,8 @@ async function processData(_job, dataStr) {
 }
 
 
-async function processData0(_job, dataStr) {
-
-    let job = _job;
-
-    let lines = splitLines(dataStr);
-
-    // console.log('Number of lines to process:', lines.length);
-
-    // console.log(lines);
-
-    // process.exit();
-
-    let myObj = new Object;
-
-    /* 	//-- for Wisen type csv file only
-    
-        lines.forEach(function (element, index) {
-            if (lines[index].length) {
-    
-                let temp = lines[index].split(',');
-                // console.log(temp);
-    
-                if (!myObj.hasOwnProperty(temp[1])) {
-                    myObj[temp[1]] = [];
-                }
-    
-                myObj[temp[1]].push(lines[index]);
-                // console.log(lines[index]);
-            }
-        });
-    	
-        //-- End of for Wisen type csv file only */
-
-    // Campbell TOA5 contains 4 lines of info. we should process start from line 5 (i = 4)
-    for (let i = 0, len = lines.length; i < len; i++) {
-        if (lines[i].length) {
-
-            // remove all double quotes in the lines
-            // source: https://stackoverflow.com/a/19156197
-            lines[i] = lines[i].replace(/['"]+/g, '');
-            // console.log(lines[i]);
-
-            let temp = lines[i].split(',');
-            // console.log(temp);
-
-            if (!myObj.hasOwnProperty(measurement_name)) {
-                myObj[measurement_name] = [];
-            }
-
-
-            myObj[measurement_name].push(lines[i]);
-            // console.log(lines[i]);
-        }
-    }
-
-    console.log('Job %d - keys found: %d, measurement_name [%s]', job, Object.keys(myObj).length, measurement_name);
-    // console.log(myObj);
-
-    // dataObj = myObj;
-    return myObj;
-}
-
-
 async function insertData(_job, _path, objectvar) {
-    // logger.debug('insertData')
+    // logger2.debug('insertData')
     let job = _job;
     let path = _path;
     // let influxPointsArray = _influxPointsArray;
@@ -293,7 +236,7 @@ async function insertData(_job, _path, objectvar) {
     // console.log('objectvar[key].length:', objectvar[key].length);
 
     for (let i = 0; i < objectvar.length; i++) {
-        // logger.debug('UHUYYYY')
+        // logger2.debug('UHUYYYY')
 
         let tempArray = objectvar[i];
 
@@ -347,9 +290,9 @@ async function insertData(_job, _path, objectvar) {
             let dateTimeColumnNumber = 0
 
             if (inserts.length == numberOfColumn) {
-                // logger.debug('DORRRR')
+                // logger2.debug('DORRRR')
                 if (inserts[dateTimeColumnNumber].length == undefined) { // check if format is a number, not a string
-                    // logger.debug('DERRRR')
+                    // logger2.debug('DERRRR')
                     let day = moment.unix((inserts[dateTimeColumnNumber])).utcOffset(7 * 60);
                     // let day = moment(1318781876406); //milliseconds
 
@@ -381,11 +324,12 @@ async function insertData(_job, _path, objectvar) {
                         .tag('alias', inserts[3])
                         .stringField('dateTimeStr', inserts[0])
                         .floatField('value', inserts[4])
-                        .uintField('epoch', inserts[1])
+                        // .uintField('epoch', inserts[1])
+                        .floatField('epoch', inserts[1])
                         .timestamp(inserts[1] * 1000000000)
 
 
-                    // logger.debug('DORRRR')
+                    // logger2.debug('DORRRR')
 
 
                     influxPoints.push(point);
@@ -403,7 +347,7 @@ async function insertData(_job, _path, objectvar) {
                     // }
                 }
                 else if (inserts[dateTimeColumnNumber].length) { // if true, then format is string
-                    // logger.debug('DORRRR 22')
+                    // logger2.debug('DORRRR 22')
                     if (inserts[dateTimeColumnNumber].includes(":") && inserts[dateTimeColumnNumber].length == 19) {
                         // console.log('Timestamp is in DATETIME format');
                         // console.log('inserts[0]', inserts[0]);
@@ -423,8 +367,6 @@ async function insertData(_job, _path, objectvar) {
                         // console.log(epoch);
                         // console.log('inserts:', inserts);
                         // console.log(inserts);
-
-
 
                         //*********** Check for abnormal sensor value
                         // If abnormal (bigger than 99999), then replace to null
@@ -467,11 +409,12 @@ async function insertData(_job, _path, objectvar) {
                             .tag('alias', inserts[3])
                             .stringField('dateTimeStr', inserts[0])
                             .floatField('value', inserts[4])
-                            .uintField('epoch', inserts[1] * 1000)
+                            // .uintField('epoch', inserts[1] * 1000)
+                            .floatField('epoch', inserts[1] * 1000)
                             .timestamp(inserts[1] * 1000000000)
 
 
-                        // logger.debug('DORRRR')
+                        // logger2.debug('DORRRR')
 
                         influxPoints.push(point);
 

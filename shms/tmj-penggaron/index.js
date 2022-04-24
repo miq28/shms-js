@@ -1,3 +1,4 @@
+// require('dotenv').config({path: '../../.env'})
 require('dotenv').config()
 // const logger = require('js-logger')
 // logger.useDefaults({
@@ -11,8 +12,7 @@ require('dotenv').config()
 
 
 // const { hostname } = require('os')
-
-
 // require sensor scipts here
-require('./shms/tmj-penggaron/rst_tiltmeter')
-require('./shms/tmj-penggaron/wisen_tiltmeter')
+require('./rst_tiltmeter')
+require('./wisen_tiltmeter')
+
