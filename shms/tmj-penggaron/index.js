@@ -1,5 +1,5 @@
 // require('dotenv').config({path: '../../.env'})
-require('dotenv').config()
+require('dotenv').config({path:__dirname+'/.env'})
 // const logger = require('js-logger')
 // logger.useDefaults({
 //     defaultLevel: logger.INFO,
@@ -14,5 +14,5 @@ require('dotenv').config()
 // const { hostname } = require('os')
 // require sensor scipts here
 require('./rst_tiltmeter')
-require('./wisen_tiltmeter')
+// require('./wisen_tiltmeter')
 

@@ -33,25 +33,19 @@ var logger1 = Logger.get(measurement_name);
 
 
 let watchedPaths = [
-    // "/home/sammy/ftp/files/node/*.txt",
-    // "/home/sammy/ftp/files/combined/*.txt"
-    // "/home/kudus/ftp/combined/*.txt"
-    // "/home/kudus/ftp/wisen/*/combined/*"
 
-    // 'DTLAngle/DTLAngle_*.txt',
-
-
-    "/home/shms/ftp/2005_tmj_penggaron/rst_tiltmeter/DTLAngle/DTLAngle_*.txt",
-    "/home/shms/ftp/2005_tmj_penggaron/rst_tiltmeter/DTLSinAngle/DTLSinAngle_*.txt",
-    "/home/shms/ftp/2005_tmj_penggaron/rst_tiltmeter/DTLDeltaAngle/DTLDeltaAngle_*.txt",
-    "/home/shms/ftp/2005_tmj_penggaron/rst_tiltmeter/DTLDeltaSinAngle/DTLDeltaSinAngle_*.txt",
-    "/home/shms/ftp/2005_tmj_penggaron/rst_tiltmeter/DTLDeltaDisplacement/DTLDeltaDisplacement_*.txt",
+    // "/home/shms/ftp/2005_tmj_penggaron/rst_tiltmeter/DTLDeltaSinAngle/DTLDeltaSinAngle_*.txt",
+    // "/home/shms/ftp/2005_tmj_penggaron/rst_tiltmeter/DTLAngle/DTLAngle_*.txt",
+    // "/home/shms/ftp/2005_tmj_penggaron/rst_tiltmeter/DTLDeltaAngle/DTLDeltaAngle_*.txt",
     "/home/shms/ftp/2005_tmj_penggaron/rst_tiltmeter/DTLBatt/DTLBatt_*.txt",
-    "/home/shms/ftp/2005_tmj_penggaron/rst_tiltmeter/DTLTemperature/DTLTemperature_*.txt",
 
-    // "/home/shms/ftp/2005_tmj_penggaron/rst_tiltmeter/DTLDeltaAngle/DTLDeltaAngle_2022-01-28.txt",
-
-    // "/home/shms/ftp/2005_tmj_penggaron/rst_tiltmeter/*/*test*.txt",
+    // "/home/shms/ftp/2005_tmj_penggaron/rst_tiltmeter/DTLAngle/DTLAngle_*.txt",
+    // "/home/shms/ftp/2005_tmj_penggaron/rst_tiltmeter/DTLSinAngle/DTLSinAngle_*.txt",
+    // "/home/shms/ftp/2005_tmj_penggaron/rst_tiltmeter/DTLDeltaAngle/DTLDeltaAngle_*.txt",
+    // "/home/shms/ftp/2005_tmj_penggaron/rst_tiltmeter/DTLDeltaSinAngle/DTLDeltaSinAngle_*.txt",
+    // "/home/shms/ftp/2005_tmj_penggaron/rst_tiltmeter/DTLDeltaDisplacement/DTLDeltaDisplacement_*.txt",
+    // "/home/shms/ftp/2005_tmj_penggaron/rst_tiltmeter/DTLBatt/DTLBatt_*.txt",
+    // "/home/shms/ftp/2005_tmj_penggaron/rst_tiltmeter/DTLTemperature/DTLTemperature_*.txt",
 
 ];
 
@@ -97,6 +91,13 @@ watcher
         // watcher.add(path)
         // console.log(watchedPaths)
     })
+    // .on('all', function (path) {
+    //     // let time = new Date();
+    //     // jobNum++;
+    //     // logger1.info(`Job ${jobNum} - file added: ${path}`);
+    //     // run(jobNum, path);
+    //     logger1.info(path)
+    // })
     .on('add', function (path) {
         let time = new Date();
         jobNum++;
@@ -323,8 +324,8 @@ async function insertData(_job, _path, objectvar) {
                         .tag('alias', headerFields[k - 1])
                         .stringField('dateTimeStr', inserts[0])
                         .floatField('value', inserts[k])
-                        // .uintField('epoch', epoch * 1000)
-                        .floatField('epoch', epoch * 1000)
+                        .uintField('epoch', epoch * 1000)
+                        // .floatField('epoch', epoch * 1000)
                         .timestamp(epoch * 1000000000)
 
 
