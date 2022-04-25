@@ -34,18 +34,13 @@ var logger1 = Logger.get(measurement_name);
 
 let watchedPaths = [
 
-    // "/home/shms/ftp/2005_tmj_penggaron/rst_tiltmeter/DTLDeltaSinAngle/DTLDeltaSinAngle_*.txt",
-    // "/home/shms/ftp/2005_tmj_penggaron/rst_tiltmeter/DTLAngle/DTLAngle_*.txt",
-    // "/home/shms/ftp/2005_tmj_penggaron/rst_tiltmeter/DTLDeltaAngle/DTLDeltaAngle_*.txt",
-    "/home/shms/ftp/2005_tmj_penggaron/rst_tiltmeter/DTLBatt/DTLBatt_*.txt",
-
-    // "/home/shms/ftp/2005_tmj_penggaron/rst_tiltmeter/DTLAngle/DTLAngle_*.txt",
+    "/home/shms/ftp/2005_tmj_penggaron/rst_tiltmeter/DTLAngle/DTLAngle_*.txt",
     // "/home/shms/ftp/2005_tmj_penggaron/rst_tiltmeter/DTLSinAngle/DTLSinAngle_*.txt",
-    // "/home/shms/ftp/2005_tmj_penggaron/rst_tiltmeter/DTLDeltaAngle/DTLDeltaAngle_*.txt",
-    // "/home/shms/ftp/2005_tmj_penggaron/rst_tiltmeter/DTLDeltaSinAngle/DTLDeltaSinAngle_*.txt",
+    "/home/shms/ftp/2005_tmj_penggaron/rst_tiltmeter/DTLDeltaAngle/DTLDeltaAngle_*.txt",
+    "/home/shms/ftp/2005_tmj_penggaron/rst_tiltmeter/DTLDeltaSinAngle/DTLDeltaSinAngle_*.txt",
     // "/home/shms/ftp/2005_tmj_penggaron/rst_tiltmeter/DTLDeltaDisplacement/DTLDeltaDisplacement_*.txt",
-    // "/home/shms/ftp/2005_tmj_penggaron/rst_tiltmeter/DTLBatt/DTLBatt_*.txt",
-    // "/home/shms/ftp/2005_tmj_penggaron/rst_tiltmeter/DTLTemperature/DTLTemperature_*.txt",
+    "/home/shms/ftp/2005_tmj_penggaron/rst_tiltmeter/DTLBatt/DTLBatt_*.txt",
+    "/home/shms/ftp/2005_tmj_penggaron/rst_tiltmeter/DTLTemperature/DTLTemperature_*.txt",
 
 ];
 

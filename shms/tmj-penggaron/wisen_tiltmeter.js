@@ -29,17 +29,12 @@ var logger2 = Logger.get(measurement_name);
 
 
 let watchedPaths = [
-    // "/home/sammy/ftp/files/node/*.txt",
-    // "/home/sammy/ftp/files/combined/*.txt"
-    // "/home/kudus/ftp/combined/*.txt"
-    // "/home/kudus/ftp/wisen/*/combined/*"
-    // "/home/shms/ftp/2005_tmj_penggaron/wisen_tiltmeter/1_Angle/1_Angle*.txt",
-    //"/home/shms/ftp/2005_tmj_penggaron/wisen_tiltmeter/Angle/Angle_*.txt",
+
     "/home/shms/ftp/2005_tmj_penggaron/wisen_tiltmeter/Angle/Angle_*.txt",
-    "/home/shms/ftp/2005_tmj_penggaron/wisen_tiltmeter/SinAngle/SinAngle_*.txt",
+    // "/home/shms/ftp/2005_tmj_penggaron/wisen_tiltmeter/SinAngle/SinAngle_*.txt",
     "/home/shms/ftp/2005_tmj_penggaron/wisen_tiltmeter/DeltaAngle/DeltaAngle_*.txt",
     "/home/shms/ftp/2005_tmj_penggaron/wisen_tiltmeter/DeltaSinAngle/DeltaSinAngle_*.txt",
-    "/home/shms/ftp/2005_tmj_penggaron/wisen_tiltmeter/DeltaDisplacement/DeltaDisplacement_*.txt",
+    // "/home/shms/ftp/2005_tmj_penggaron/wisen_tiltmeter/DeltaDisplacement/DeltaDisplacement_*.txt",
     "/home/shms/ftp/2005_tmj_penggaron/wisen_tiltmeter/Batt/Batt_*.txt",
     "/home/shms/ftp/2005_tmj_penggaron/wisen_tiltmeter/Temperature/Temperature_*.txt",
 
@@ -409,8 +404,8 @@ async function insertData(_job, _path, objectvar) {
                             .tag('alias', inserts[3])
                             .stringField('dateTimeStr', inserts[0])
                             .floatField('value', inserts[4])
-                            // .uintField('epoch', inserts[1] * 1000)
-                            .floatField('epoch', inserts[1] * 1000)
+                            .uintField('epoch', inserts[1] * 1000)
+                            // .floatField('epoch', inserts[1] * 1000)
                             .timestamp(inserts[1] * 1000000000)
 
 

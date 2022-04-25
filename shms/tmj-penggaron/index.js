@@ -14,5 +14,5 @@ require('dotenv').config({path:__dirname+'/.env'})
 // const { hostname } = require('os')
 // require sensor scipts here
 require('./rst_tiltmeter')
-// require('./wisen_tiltmeter')
+require('./wisen_tiltmeter')
 
